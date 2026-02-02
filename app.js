@@ -30,6 +30,14 @@ app.get("/", function (req,res){
 
 });
 
+app.get("/:nome",function(req,res){
+    Clientes.findAll({where: {'nome': req.params.nome}}).then(function(clientes){
+        res.send({clientes:clientes})
+    }).catch(function(erro){
+        res.send("Houve um erro ao buscar os clientes: " + erro);
+    });         
+});
+
 app.patch("/atualizar/:id", function(req, res){
     Clientes.update({
         nome: req.body.nome,    
@@ -55,7 +63,7 @@ app.delete("/deletar/:id", function(req, res){
     });
 }); 
 
-
-app.listen(8081,function(){
+const PORT= process.env.PORT || 8081;
+app.listen(PORT,"0.0.0.0",function(){
     console.log("Servidor esta rodando...");
 });

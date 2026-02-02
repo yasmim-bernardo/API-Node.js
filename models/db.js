@@ -1,22 +1,31 @@
+require("dotenv").config();
 const { Sequelize } = require("sequelize");
+const mysql2 = require("mysql2");
 
 const sequelize = new Sequelize(
-    "cadastro",
-    "root",
-    "278542",
-    {
-        host: "localhost",
-        dialect: "mysql"
-    }
+   process.env.MYSQLDATABASE,
+   process.env.MYSQLUSER,
+   process.env.MYSQLPASSWORD,   
+   {
+        host: process.env.MYSQLHOST,
+        port: process.env.MYSQLPORT,
+        dialect: "mysql",
+        dialectModule: mysql2,
+        logging: false,
+        pool: {max: 5, min: 0, idle: 30000,acquire:10000
+        }
+   }
+
 );
 
-sequelize.authenticate().then(function(){
-    console.log("Conectado com sucesso!");
-}).catch(function(erro){
-    console.log("Falha ao se conectar: " + erro);
+(async () => { 
+    try {
+        await sequelize.authenticate(); 
+        console.log("Banco de dados conectado com sucesso!");    
+     }catch(error) {
+        console.log("Erro ao se conectar ao banco de dados " + error);
+    }
+   
 });
 
-module.exports = {
-    Sequelize: Sequelize,
-    sequelize: sequelize
-}
+module.exports = {Sequelize, sequelize}
